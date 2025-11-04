@@ -11,7 +11,7 @@ def carregar_dados_csv(filename):
     try:
         with open(filename, mode='r', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
-            # Converte a pontuação de string para int onde aplicável
+            
             dados = list(reader)
             for linha in dados:
                 if 'pontuacao' in linha:
@@ -44,6 +44,6 @@ def carregar_registros():
     return carregar_dados_csv(REGISTROS_FILE)
 
 def salvar_registros(lista_registros):
-    # Define os nomes das colunas para o arquivo CSV de registros
-    fieldnames = ['nome_usuario', 'data', 'pontuacao', 'transporte', 'residuos', 'energia', 'alimentacao']
+    
+    fieldnames = ['nome_usuario', 'data', 'pontuacao', 'transporte', 'residuos', 'energia', 'alimentacao', 'engajamento']
     salvar_dados_csv(lista_registros, REGISTROS_FILE, fieldnames=fieldnames)

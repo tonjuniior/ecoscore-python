@@ -1,17 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Dicas Sustentáveis{% endblock %}
+{% block title %}Dicas Personalizadas{% endblock %}
 
 {% block content %}
-    {% if dica %}
-        <h2>{{ dica.titulo }}</h2>
-        <div class="dica-box">
-            <p>{{ dica.texto }}</p>
-        </div>
-    {% else %}
-        <h2>Dicas Personalizadas</h2>
-        <p>Não foi possível gerar uma dica no momento. Tente novamente mais tarde.</p>
-    {% endif %}
+<style>
+    .dica-card {
+        background-color: var(--surface-dark);
+        border-left: 5px solid var(--primary-green);
+        border-radius: 8px;
+        padding: 25px;
+        margin: 20px 0;
+    }
+    .dica-card h3 {
+        margin-top: 0;
+        color: var(--text-light);
+    }
+</style>
+    <h2>Dicas para Você</h2>
+    <div class="dica-card">
+        <h3>{{ dica.titulo }}</h3>
+        <p>{{ dica.texto }}</p>
+    </div>
     <br>
-    <a href="{{ url_for('menu') }}" class="btn" style="background-color: #7f8c8d;">Voltar ao Menu</a>
+    <a href="{{ url_for('menu') }}" class="btn btn-secondary">Voltar ao Menu</a>
 {% endblock %}

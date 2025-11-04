@@ -1,3 +1,7 @@
-nome_usuario,data,pontuacao,transporte,residuos,energia,alimentacao
-Matheus,2025-10-11,14,Transporte Público,Separei para reciclagem,Desliguei tudo ao sair,Comi carne branca/ovos
-Vitor Amorim,2025-10-11,3,Transporte Público,Não reciclei,Desliguei tudo ao sair,Comi carne vermelha
+nome_usuario,data,pontuacao,transporte,residuos,energia,alimentacao,engajamento
+Matheus,2025-10-11,14,Transporte Público,Separei para reciclagem,Desliguei tudo ao sair,Comi carne branca/ovos,
+Vitor Amorim,2025-10-11,3,Transporte Público,Não reciclei,Desliguei tudo ao sair,Comi carne vermelha,
+Vitor Amorim,2025-11-02,-1,Usei Transporte por App sozinho (ex: Uber/99),Usei materiais descartáveis e sem reuso,,Comprei de vendedor que usa embalagens ecológicas,Ignorei campanhas educativas de sustentabilidade do evento;Carreguei o celular em totens de energia do evento
+Matheus,2025-11-02,20,Usei Transporte por App sozinho (ex: Uber/99);Usei Transporte Público ou Transporte Gratuito fornecido pelo evento (Metrô/Ônibus),Não separei meu lixo nas lixeiras corretas;Paguei pelo copo/garrafa reutilizável do evento,,Evitei fast-food industrializado;Optei por refeição vegetariana ou vegana,"Ignorei campanhas educativas de sustentabilidade do evento;Peguei brindes reutilizáveis como ecobags, kits de sementes ou produtos artesanais"
+Junin,2025-11-03,-2,Vim de carona compatilhada (com amigos/colegas ou por App);Usei Transporte Público ou Transporte Gratuito fornecido pelo evento (Metrô/Ônibus),"Não separei meu lixo nas lixeiras corretas;Usei materiais compostáveis ou biodegradavéis (copos, pratos, etc.)",,Desperdicei comida ou bebida;Optei por refeição com carne vermelha;Comprei de vendedor que usa embalagens ecológicas,Ignorei campanhas educativas de sustentabilidade do evento
+Junin,2025-10-11,3,Transporte Público,Não reciclei,Desliguei tudo ao sair,Comi carne vermelha,

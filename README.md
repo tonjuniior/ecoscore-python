@@ -1,2 +1,0 @@
-# ecoscore-flask-app
-ecosistem

@@ -1,9 +1,7 @@
-# registro.py
-
 import datetime
 from storage import carregar_registros, salvar_registros
 from config_score import PONTUACAO_ECOSCORE, CATEGORIAS
-from utils import score # Importa a função de formatação
+from utils import score 
 
 def coletar_e_pontuar_habitos_diarios(usuario):
     """
@@ -12,7 +10,7 @@ def coletar_e_pontuar_habitos_diarios(usuario):
     data_hoje = datetime.date.today().strftime("%Y-%m-%d")
     todos_registros = carregar_registros()
 
-    # Verifica se o usuário já preencheu hoje
+    
     registros_usuario = [r for r in todos_registros if r['nome_usuario'] == usuario]
     if any(r['data'] == data_hoje for r in registros_usuario):
         print(f"\n🚫 Você já preencheu o registro para a data {data_hoje}.")
@@ -26,45 +24,54 @@ def coletar_e_pontuar_habitos_diarios(usuario):
     respostas_diarias = {}
     pontuacao_total = 0
 
-    # Itera sobre cada categoria e pergunta as opções
+    
     for categoria in CATEGORIAS:
         opcoes = PONTUACAO_ECOSCORE[categoria]
         opcoes_lista = list(opcoes.keys())
         
         print(f"\n[{categoria}]:")
         
-        # Mostra as opções com números
+        
         for i, opcao in enumerate(opcoes_lista):
             pontos = opcoes[opcao]
             print(f"  [{i+1}] {opcao} ({pontos:+d} pts)")
         
-        # Coleta a escolha do usuário
+        
         while True:
-            try:
-                escolha_indice = int(input(f"Selecione uma opção para {categoria} (1-{len(opcoes_lista)}): ")) - 1
-                if 0 <= escolha_indice < len(opcoes_lista):
-                    opcao_selecionada = opcoes_lista[escolha_indice]
-                    pontos_obtidos = opcoes[opcao_selecionada]
-                    
-                    # 1. Armazena a resposta
-                    respostas_diarias[categoria.lower()] = opcao_selecionada
-                    
-                    # 2. Calcula a pontuação
-                    pontuacao_total += pontos_obtidos
-                    
-                    print(f"  -> Seleção: '{opcao_selecionada}'. Pontos: {pontos_obtidos:+d}.")
-                    break
-                else:
-                    print("Opção inválida. Tente novamente.")
-            except ValueError:
-                print("Entrada inválida. Por favor, digite um número.")
+            escolhas_str = input(f"Selecione uma ou mais opções para {categoria} (ex: 1,3). Digite 0 para pular: ")
+            if escolhas_str.strip() == '0':
+                break
 
-    # 3. Salva o registro
+            indices_selecionados = []
+            opcoes_selecionadas = []
+            pontos_categoria = 0
+            valido = True
+
+            for part in escolhas_str.split(','):
+                try:
+                    indice = int(part.strip()) - 1
+                    if 0 <= indice < len(opcoes_lista):
+                        opcoes_selecionadas.append(opcoes_lista[indice])
+                        pontos_categoria += opcoes[opcoes_lista[indice]]
+                    else:
+                        raise ValueError
+                except ValueError:
+                    print(f"Opção '{part.strip()}' inválida. Tente novamente.")
+                    valido = False
+                    break
+            
+            if valido:
+                respostas_diarias[categoria.lower()] = ";".join(opcoes_selecionadas)
+                pontuacao_total += pontos_categoria
+                print(f"  -> Seleções para {categoria}: {', '.join(opcoes_selecionadas)}. Pontos: {pontos_categoria:+d}.")
+                break
+
+    
     novo_registro = {
         "nome_usuario": usuario,
         "data": data_hoje,
         "pontuacao": pontuacao_total,
-        **respostas_diarias  # Adiciona as respostas de cada categoria
+        **respostas_diarias  
     }
     
     todos_registros.append(novo_registro)

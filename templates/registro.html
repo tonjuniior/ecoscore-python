@@ -3,6 +3,82 @@
 {% block title %}Registro de Hábitos{% endblock %}
 
 {% block content %}
+<style>
+    /* --- ESTILO DOS CARDS DE CATEGORIA --- */
+    .form-group {
+        background-color: var(--surface-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px; /* Cantos arredondados */
+        padding: 20px; /* Espaçamento interno */
+        margin-bottom: 25px;
+        transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .form-group:hover {
+        border-color: var(--primary-green);
+        transform: translateY(-2px);
+    }
+
+    /* Título da categoria */
+    .form-group > label {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: var(--text-light);
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    /* Container das opções de checkbox */
+    .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Espaço entre os itens */
+    }
+
+    /* Estilo para cada linha de opção (checkbox + label) */
+    .checkbox-item {
+        display: flex;
+        align-items: flex-start; /* Alinha o checkbox com o topo do texto */
+        background-color: #333;
+        padding: 12px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, border-left 0.3s ease;
+        border-left: 3px solid transparent;
+        cursor: pointer;
+    }
+    .checkbox-item:hover {
+        background-color: #3d3d3d;
+    }
+
+    /* Estilo do input e do label dentro do item */
+    .checkbox-item input[type="checkbox"] {
+        margin-top: 2px; /* Ajuste fino vertical */
+        margin-right: 12px; /* Espaço entre o checkbox e o texto */
+        transform: scale(1.2); /* Deixa o checkbox um pouco maior */
+        accent-color: var(--primary-green); /* Cor do checkbox quando marcado */
+    }
+    .checkbox-item label {
+        margin: 0;
+        flex-grow: 1;
+        display: flex; /* Habilita flexbox para alinhar o texto e os pontos */
+        justify-content: space-between; /* Coloca espaço entre o texto e os pontos */
+        align-items: flex-start;
+        cursor: pointer;
+        color: var(--text-light);
+    }
+
+    /* Estilo para o texto da opção */
+    .option-text {
+        flex-grow: 1; /* Permite que o texto cresça e ocupe o espaço */
+        padding-right: 10px; /* Espaço para não colar nos pontos */
+    }
+
+    /* Estilo para a pontuação */
+    .option-points {
+        white-space: nowrap; /* Impede que a pontuação quebre a linha */
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+</style>
     <h2>Formulário EcoScore de Hoje</h2>
 
     {% if ja_registrou %}
@@ -11,21 +87,25 @@
         </div>
         <br>
     {% else %}
-        <p style="text-align: center;">Preencha seus hábitos de hoje para receber sua pontuação.</p>
+        <p style="text-align: center; color: var(--text-muted);">Preencha seus hábitos de hoje para receber sua pontuação.</p>
         <form method="POST">
             {% for categoria, opcoes in categorias.items() %}
             <div class="form-group">
-                <label for="{{ categoria.lower() }}">{{ categoria.title() }}</label>
-                <select name="{{ categoria.lower() }}" id="{{ categoria.lower() }}" class="form-group input" required>
-                    <option value="" disabled selected>Selecione uma opção...</option>
-                    {% for opcao, pontos in opcoes.items() %}
-                        <option value="{{ opcao }}">{{ opcao }} ({{ '%+d'|format(pontos) }} pts)</option>
-                    {% endfor %}
-                </select>
+                <label>{{ categoria.title() }}</label>
+                <div class="checkbox-group">
+                {% for opcao, pontos in opcoes.items() %}
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="{{ categoria.lower() }}" value="{{ opcao }}" id="{{ categoria.lower() }}-{{ loop.index }}">
+                        <label for="{{ categoria.lower() }}-{{ loop.index }}">
+                            <span class="option-text">{{ opcao }}</span>
+                        </label>
+                    </div>
+                {% endfor %}
+                </div>
             </div>
             {% endfor %}
-            <button type="submit" class="btn">Salvar Registro</button>
+            <button type="submit" class="btn btn-primary">Salvar Registro</button>
         </form>
     {% endif %}
-    <a href="{{ url_for('menu') }}" class="btn" style="background-color: #7f8c8d; margin-top: 10px;">Voltar ao Menu</a>
+    <a href="{{ url_for('menu') }}" class="btn btn-secondary" style="margin-top: 10px;">Voltar ao Menu</a>
 {% endblock %}

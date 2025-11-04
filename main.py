@@ -1,9 +1,6 @@
-# main.py
-
-# Importa as funções dos seus módulos
 from auth import cadastro_usuario, login_usuario
 from registro import coletar_e_pontuar_habitos_diarios
-from desempenho import exibir_desempenho, gerar_dicas # Importação da Fase 4
+from desempenho import exibir_desempenho, gerar_dicas 
 
 def menu_logado(usuario):
     """Menu para o usuário após o login."""
@@ -64,10 +61,9 @@ def menu_principal():
         else:
             print("Opção inválida.")
 
-    # Se o login foi bem-sucedido (usuario_logado não é None), abre o menu logado
     if usuario_logado:
         menu_logado(usuario_logado)
 
-# Inicia o programa
+
 if __name__ == '__main__':
     menu_principal()

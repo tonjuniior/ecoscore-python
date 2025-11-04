@@ -1,13 +1,13 @@
-# app.py
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import datetime
 from auth import cadastro_usuario, login_usuario
 from storage import carregar_registros, salvar_registros
 from config_score import PONTUACAO_ECOSCORE, CATEGORIAS
-from desempenho import get_dados_desempenho, get_dica_personalizada
+from desempenho import get_dados_desempenho, get_dica_personalizada, get_dados_analise_geral
 
 app = Flask(__name__)
-# Chave secreta necessária para usar 'flash messages' (notificações)
+app.jinja_env.globals['enumerate'] = enumerate
+
 app.secret_key = 'uma-chave-secreta-muito-segura-e-dificil-de-adivinhar' 
 
 @app.route('/')
@@ -25,12 +25,11 @@ def login():
         
         usuario = login_usuario(nome, senha)
         if usuario:
-            session['usuario'] = usuario # Armazena o usuário na sessão
+            session['usuario'] = usuario 
             flash(f'Bem-vindo(a) de volta, {usuario}!', 'success')
             return redirect(url_for('menu'))
         else:
-            # A função login_usuario já imprime o erro no console.
-            # Para a web, seria melhor retornar a mensagem para o template.
+            
             flash('Usuário ou senha inválidos.', 'danger')
             
     return render_template('login.html')
@@ -59,11 +58,11 @@ def menu():
 
 @app.route('/logout')
 def logout():
-    session.pop('usuario', None) # Remove o usuário da sessão
+    session.pop('usuario', None) 
     flash('Você saiu do sistema.', 'info')
     return redirect(url_for('login'))
 
-# --- Rotas para as funcionalidades principais (placeholders) ---
+
 
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
@@ -73,7 +72,7 @@ def registro():
     usuario = session['usuario']
     data_hoje = datetime.date.today().strftime("%Y-%m-%d")
     
-    # Verifica se o usuário já preencheu o formulário hoje
+
     todos_registros = carregar_registros()
     registros_usuario = [r for r in todos_registros if r.get('nome_usuario') == usuario]
     ja_registrou = any(r.get('data') == data_hoje for r in registros_usuario)
@@ -86,17 +85,26 @@ def registro():
         respostas_diarias = {}
         pontuacao_total = 0
 
-        # Coleta as respostas do formulário e calcula a pontuação
-        for categoria in CATEGORIAS:
-            # O nome do campo no formulário é a categoria em minúsculas
-            chave_categoria = categoria.lower()
-            opcao_selecionada = request.form.get(chave_categoria)
-            
-            if opcao_selecionada:
-                respostas_diarias[chave_categoria] = opcao_selecionada
-                pontuacao_total += PONTUACAO_ECOSCORE[categoria][opcao_selecionada]
+        
+        mapa_chaves = {
+            "TRANSPORTE": "transporte",
+            "RESÍDUOS": "residuos",
+            "ALIMENTAÇÃO": "alimentacao",
+            "ENGAJAMENTO E MATERIAIS": "engajamento"
+        }
 
-        # Salva o novo registro
+        for categoria_original in CATEGORIAS:
+            chave_form = categoria_original.lower()
+            chave_csv = mapa_chaves[categoria_original]
+
+            opcoes_selecionadas = request.form.getlist(chave_form)
+            
+            if opcoes_selecionadas:
+                respostas_diarias[chave_csv] = ";".join(opcoes_selecionadas)
+                for opcao in opcoes_selecionadas:
+                    pontuacao_total += PONTUACAO_ECOSCORE[categoria_original].get(opcao, 0)
+
+        
         novo_registro = {
             "nome_usuario": usuario,
             "data": data_hoje,
@@ -109,7 +117,7 @@ def registro():
         flash(f'🎉 Registro salvo! Sua pontuação de hoje foi: {pontuacao_total:+d} pontos.', 'success')
         return redirect(url_for('menu'))
 
-    # Se for GET, exibe o formulário ou a mensagem de que já registrou
+    
     return render_template('registro.html', categorias=PONTUACAO_ECOSCORE, ja_registrou=ja_registrou)
 
 @app.route('/desempenho')
@@ -120,7 +128,7 @@ def desempenho():
     usuario = session['usuario']
     dados = get_dados_desempenho(usuario)
 
-    # Passa os dados para o template. Se 'dados' for None, o template tratará disso.
+    
     return render_template('desempenho.html', dados=dados)
 
 
@@ -135,7 +143,16 @@ def dicas():
     
     return render_template('dicas.html', dica=dica)
 
-# Roda o servidor de desenvolvimento
+
+@app.route('/analise_geral')
+def analise_geral():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    
+    dados = get_dados_analise_geral()
+    return render_template('analise_geral.html', dados=dados)
+
+
 if __name__ == '__main__':
-    # O modo debug reinicia o servidor automaticamente a cada alteração no código.
+    
     app.run()
